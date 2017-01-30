@@ -325,6 +325,31 @@ cmc %>%
     geom_hex()
 ```
 
+### Boxplot options
+
+```{r}
+# make a boxplot showing the range of Wife Ages by
+# Number of Children - "bin" widths = 1 child
+# we'll use cut_width
+cmc %>%
+  ggplot(aes(x=NumChild, y=WifeAge)) +
+    geom_boxplot(aes(group=cut_width(NumChild, 1)))
+
+# we could also use a binning option based
+# on n groups of equal Number of Children range
+# let's try 8 intervals using cut_interval
+cmc %>%
+  ggplot(aes(x=NumChild, y=WifeAge)) +
+    geom_boxplot(aes(group=cut_interval(NumChild, 8)))
+
+# this time use cut_number and 6 bins
+# so that each bin has about the same # of cases
+cmc %>%
+  ggplot(aes(x=NumChild, y=WifeAge)) +
+    geom_boxplot(aes(group=cut_number(NumChild, 6)))
+```
+
+
 ### Histograms and Density estimates of Continuous Data
 
 Let's look at Wife's Age and Number of Children - do you expect these to look normal?

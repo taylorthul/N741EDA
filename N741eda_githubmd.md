@@ -464,6 +464,40 @@ cmc %>%
 
 ![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-22-1.png)
 
+### Boxplot options
+
+``` r
+# make a boxplot showing the range of Wife Ages by
+# Number of Children - "bin" widths = 1 child
+# we'll use cut_width
+cmc %>%
+  ggplot(aes(x=NumChild, y=WifeAge)) +
+    geom_boxplot(aes(group=cut_width(NumChild, 1)))
+```
+
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-23-1.png)
+
+``` r
+# we could also use a binning option based
+# on n groups of equal Number of Children range
+# let's try 8 intervals using cut_interval
+cmc %>%
+  ggplot(aes(x=NumChild, y=WifeAge)) +
+    geom_boxplot(aes(group=cut_interval(NumChild, 8)))
+```
+
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-23-2.png)
+
+``` r
+# this time use cut_number and 6 bins
+# so that each bin has about the same # of cases
+cmc %>%
+  ggplot(aes(x=NumChild, y=WifeAge)) +
+    geom_boxplot(aes(group=cut_number(NumChild, 6)))
+```
+
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-23-3.png)
+
 ### Histograms and Density estimates of Continuous Data
 
 Let's look at Wife's Age and Number of Children - do you expect these to look normal?
@@ -479,7 +513,7 @@ cmc %>%
     geom_density()
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-23-1.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-24-1.png)
 
 ``` r
 cmc %>%
@@ -490,7 +524,7 @@ cmc %>%
     geom_density(alpha=.2, fill="blue")
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-23-2.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-24-2.png)
 
 What about overlaying a Normal Curve? Also add some better axis labels and a title
 
@@ -510,4 +544,4 @@ cmc %>%
        y = "Density")
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-24-1.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-25-1.png)
