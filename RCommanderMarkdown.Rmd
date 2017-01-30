@@ -1,0 +1,54 @@
+---
+title: "Replace with Main Title"
+author: "Your Name"
+date: "AUTOMATIC"
+---
+
+
+```{r echo=FALSE, message=FALSE}
+# include this code chunk as-is to set options
+knitr::opts_chunk$set(comment=NA, prompt=TRUE)
+library(Rcmdr)
+library(car)
+library(RcmdrMisc)
+```
+
+
+```{r echo=FALSE}
+# include this code chunk as-is to enable 3D graphs
+library(rgl)
+knitr::knit_hooks$set(webgl = hook_webgl)
+```
+
+```{r}
+local({
+  .Table <- with(cmc, table(WifeWork))
+  cat("\ncounts:\n")
+  print(.Table)
+  cat("\npercentages:\n")
+  print(round(100*.Table/sum(.Table), 2))
+})
+```
+
+```{r}
+library(abind, pos=23)
+```
+
+
+```{r}
+local({
+  .Table <- xtabs(~HusbOcc+Contraceptive, data=cmc)
+  cat("\nFrequency table:\n")
+  print(.Table)
+  cat("\nRow percentages:\n")
+  print(rowPercents(.Table))
+  .Test <- chisq.test(.Table, correct=FALSE)
+  print(.Test)
+})
+```
+
+```{r}
+with(cmc, Barplot(Contraceptive, by=HusbOcc, style="parallel", 
+  legend.pos="topright", xlab="Contraceptive", ylab="Frequency"))
+```
+
