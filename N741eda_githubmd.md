@@ -3,6 +3,16 @@ N741: Exploratory Data Analysis
 Melinda K. Higgins, PhD.
 January 30, 2017
 
+HELPUL Links for Graphics and EDA
+---------------------------------
+
+Here are some helpful links for doing EDA in R and Associated Graphics:
+
+-   <http://www.cookbook-r.com/Graphs/>
+-   [Quick-R Website](http://www.statmethods.net/)
+-   [EDA Chapter in "R for Data Science"](http://r4ds.had.co.nz/exploratory-data-analysis.html)
+-   [Code Examples from Practical Data Science with R - see Chapter 3](https://github.com/WinVector/zmPDSwR/tree/master/CodeExamples)
+
 Worked Example from the UCI Data Repository
 -------------------------------------------
 

@@ -29,6 +29,16 @@ library(tidyverse)
 
 ```
 
+## HELPUL Links for Graphics and EDA
+
+Here are some helpful links for doing EDA in R and Associated Graphics:
+
+* [http://www.cookbook-r.com/Graphs/](http://www.cookbook-r.com/Graphs/)
+* [Quick-R Website](http://www.statmethods.net/)
+* [EDA Chapter in "R for Data Science"](http://r4ds.had.co.nz/exploratory-data-analysis.html)
+* [Code Examples from Practical Data Science with R - see Chapter 3](https://github.com/WinVector/zmPDSwR/tree/master/CodeExamples)
+
+
 ## Worked Example from the UCI Data Repository
 
 The following dataset comes from the [UCI Data Repository](http://archive.ics.uci.edu/ml/). The dataset we'll use is the Contraceptive Method Choice dataset. The information on this dataset is provided at [http://archive.ics.uci.edu/ml/datasets/Contraceptive+Method+Choice](http://archive.ics.uci.edu/ml/datasets/Contraceptive+Method+Choice). If you click on the "Data Folder" you can download the RAW data `cmc.data` which is a comma delimited format dataset (i.e. it is a CSV formatted file) and the description of the data included, the variable names and associated codes for the values included which is in the `cmc.names` file. See "Data Folder"" at [http://archive.ics.uci.edu/ml/machine-learning-databases/cmc/](http://archive.ics.uci.edu/ml/machine-learning-databases/cmc/)
