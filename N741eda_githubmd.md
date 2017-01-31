@@ -3,6 +3,9 @@ N741: Exploratory Data Analysis
 Melinda K. Higgins, PhD.
 January 30, 2017
 
+Initial R Chunk - document and environment setup
+------------------------------------------------
+
 HELPUL Links for Graphics and EDA
 ---------------------------------
 
@@ -13,8 +16,8 @@ Here are some helpful links for doing EDA in R and Associated Graphics:
 -   [EDA Chapter in "R for Data Science"](http://r4ds.had.co.nz/exploratory-data-analysis.html)
 -   [Code Examples from Practical Data Science with R - see Chapter 3](https://github.com/WinVector/zmPDSwR/tree/master/CodeExamples)
 
-Worked Example from the UCI Data Repository
--------------------------------------------
+Setup `CMC` dataset from UCI Data Repository
+--------------------------------------------
 
 The following dataset comes from the [UCI Data Repository](http://archive.ics.uci.edu/ml/). The dataset we'll use is the Contraceptive Method Choice dataset. The information on this dataset is provided at <http://archive.ics.uci.edu/ml/datasets/Contraceptive+Method+Choice>. If you click on the "Data Folder" you can download the RAW data `cmc.data` which is a comma delimited format dataset (i.e. it is a CSV formatted file) and the description of the data included, the variable names and associated codes for the values included which is in the `cmc.names` file. See "Data Folder"" at <http://archive.ics.uci.edu/ml/machine-learning-databases/cmc/>
 
@@ -104,6 +107,16 @@ cmc$Contraceptive <- factor(cmc$Contraceptive,
                             labels = c("No-use","Long-term","Short-term"))
 ```
 
+### Save a copy of the `cmc` dataset
+
+The `save()` command will save a copy of your dataset (the `cmc` object) as an `.RData` file which is easily read by R. The associated command to then read the data back in is the `load()` command. This will be helpful shortly when we run the demo in "R Commander" (`Rcmdr` package).
+
+``` r
+# save the cmc dataset with the updated variable names
+# and associated factor levels and labeling applied.
+save(cmc, file="cmc.RData")
+```
+
 ### Look at a subset of the data
 
 ``` r
@@ -136,7 +149,8 @@ knitr::kable(head(cmc))
 |       36| med high | med high |         8| Islam   | No       | 3       | med low  | Good  | No-use        |
 |       19| high     | high     |         0| Islam   | No       | 3       | med high | Good  | No-use        |
 
-### Summarize the dataset
+Summarise Dataset - Descriptive Stats
+-------------------------------------
 
 **NOTICE** that Wife's Age and Number of Children are now the only "numeric" "integer" variables - these are the only ones for which we get summary statistics. All the remaining variables are "factors" so we only get the frequencies for each category.
 
@@ -177,6 +191,12 @@ mean(as.numeric(cmc$HusbEd))
     ## [1] 3.429735
 
 ### Cleaning up your tables & Improving Workflow with PIPES (`%>%`)
+
+The following code shows:
+
+1.  how to improve your workflow and readability of your code using "pipes" `%>%`
+2.  how to add multiple statistics per variable
+3.  and how to output these multiple stats by group for a given variable
 
 ``` r
 # these lines of code use the %>% "pipe" command.
@@ -254,197 +274,58 @@ cmc %>%
 | Non-Islam     |   220|    0|  2.85|  1.80|       3|   11|
 | Islam         |  1253|    0|  3.33|  2.44|       3|   16|
 
-### Using and Getting R Code from `Rcmdr` package (with GUI interface)
+Exploratory Graphics and Visualizations
+---------------------------------------
 
-OUTSIDE of the RMD file - run `library(Rcmdr)`. We'll load the `cmc` dataset into the local environment. Then use the GUI in `Rcmdr` to generate the R code for what you might want.
+### Learning `ggplot2` as the Core Visualization tool in R
 
-For example, getting the counts and relative %s for Wife Working categories.
+The following code uses the `ggplot2` package which is included with the `tidyverse` package already loaded above. So, we do not need to reload the `ggplot2` package.
 
-``` r
-local({
-  .Table <- with(cmc, table(WifeWork))
-  cat("\ncounts:\n")
-  print(.Table)
-  cat("\npercentages:\n")
-  print(round(100*.Table/sum(.Table), 2))
-})
-```
+The way the `ggplot2` workflow typically works is to call the `ggplot()` command, declare the dataset to be used and specify "aesthetics" - which are usually the "x" and "y" variables for univariate and bivariate graphics respectively. After calling the `ggplot()` command and providing the basic parameters, you then add `+` "geom's" or "geometric objects" that can be layered to create some spectactular graphics and visualizations.
 
-    ## 
-    ## counts:
-    ## WifeWork
-    ##  Yes   No 
-    ##  369 1104 
-    ## 
-    ## percentages:
-    ## WifeWork
-    ##   Yes    No 
-    ## 25.05 74.95
+**NOTE**: You can learn more about the `ggplot2` package at:
 
-``` r
-Table <- with(cmc, table(WifeWork))
-knitr::kable(as.data.frame(Table))
-```
+-   `ggplot2` pages at "tidyverse.org" <http://ggplot2.tidyverse.org/>
+-   Chapter 3 "Data Visualization" in the "R for Data Science" book <http://r4ds.had.co.nz/data-visualisation.html>
+-   Chapter 28 "Graphics for Communication" in the "R for Data Science" book <http://r4ds.had.co.nz/graphics-for-communication.html>
+-   RStudio Cheatsheets - see "Data Visualization with `ggplot2`" <https://www.rstudio.com/resources/cheatsheets/>
 
-| WifeWork |  Freq|
-|:---------|-----:|
-| Yes      |   369|
-| No       |  1104|
+### Bi-Variate Categorical Data - Make a Clustered Bar plot with `ggplot2`
 
-two-way table % chi-square test
-===============================
+We will used `ggplot()` with the `geom_bar()` layer to make a clustered bar chart for Contraceptive Use ("x") by Husband's Occupation ("fill") for the `cmc` dataset. Within the `geom_bar()` layer, there are 3 possible settings for the `position=` option: "dodge", "stack" and "fill" - each one gives you a different perspective of the relative counts or proportions for a categorical outcome.
 
-Open `Rcmdr` and run a two-way table with a Chi-square test of independence between Husband Occupation and Contraceptive use. And run the Rmarkdown - Generate Report from within Rcmdr to see how that report is set-up.
-
-``` r
-# r packages Rcmdr Rmarkdown uses - you'll need these too
-library(Rcmdr)
-```
-
-    ## Loading required package: splines
-
-    ## Loading required package: RcmdrMisc
-
-    ## Loading required package: car
-
-    ## 
-    ## Attaching package: 'car'
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     recode
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     some
-
-    ## Loading required package: sandwich
-
-    ## The Commander GUI is launched only in interactive sessions
-
-``` r
-library(car)
-library(RcmdrMisc)
-library(rgl)
-```
-
-### capture R code chunks for the two-way table and chi-square stats
-
-``` r
-library(abind, pos=23)
-```
-
-``` r
-# the following is the code generated by Rcmdr
-local({
-  .Table <- xtabs(~HusbOcc+Contraceptive, data=cmc)
-  cat("\nFrequency table:\n")
-  print(.Table)
-  cat("\nRow percentages:\n")
-  print(rowPercents(.Table))
-  .Test <- chisq.test(.Table, correct=FALSE)
-  print(.Test)
-})
-```
-
-    ## 
-    ## Frequency table:
-    ##        Contraceptive
-    ## HusbOcc No-use Long-term Short-term
-    ##       1    158       156        122
-    ##       2    200        79        146
-    ##       3    258        93        234
-    ##       4     13         5          9
-    ## 
-    ## Row percentages:
-    ##        Contraceptive
-    ## HusbOcc No-use Long-term Short-term Total Count
-    ##       1   36.2      35.8       28.0 100.0   436
-    ##       2   47.1      18.6       34.4 100.1   425
-    ##       3   44.1      15.9       40.0 100.0   585
-    ##       4   48.1      18.5       33.3  99.9    27
-    ## 
-    ##  Pearson's Chi-squared test
-    ## 
-    ## data:  .Table
-    ## X-squared = 65.401, df = 6, p-value = 3.573e-12
-
-Let's pull out the code pieces we need and use `knitr` to make a better table.
-
-``` r
-# create a Table object for the results from xtabs()
-Table <- xtabs(~HusbOcc+Contraceptive, data=cmc)
-
-# use the rowPercents (from the RcmdrMisc package)
-# to pull these out of the Table
-# make it a data.frame and make a nice table with knitr
-knitr::kable(as.data.frame(rowPercents(Table)),
-             caption = "Contraceptive Use by Husband Occupation")
-```
-
-|  No-use|  Long-term|  Short-term|  Total|  Count|
-|-------:|----------:|-----------:|------:|------:|
-|    36.2|       35.8|        28.0|  100.0|    436|
-|    47.1|       18.6|        34.4|  100.1|    425|
-|    44.1|       15.9|        40.0|  100.0|    585|
-|    48.1|       18.5|        33.3|   99.9|     27|
-
-### Chi-square test results
-
-``` r
-# and run the chi-square test and show the results
-chisq.test(Table, correct=FALSE)
-```
-
-    ## 
-    ##  Pearson's Chi-squared test
-    ## 
-    ## data:  Table
-    ## X-squared = 65.401, df = 6, p-value = 3.573e-12
-
-### Make Plots with `Rcmdr`
-
-Clustered Bar plot - side-by-side - Contraceptive Use by Husband Occupation
-
-``` r
-with(cmc, Barplot(Contraceptive, by=HusbOcc, style="parallel", 
-  legend.pos="topright", xlab="Contraceptive", ylab="Frequency"))
-```
-
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-16-1.png)
-
-### Make a Clustered Bar plot with `ggplot2`
-
-using the "dodge" option
+First, let's use the "dodge" option. This will plot the absolute counts for each of the 3 Contraceptive Use choices with the bars colored by the 4 possible Husband Occupation categories. Remember - these are absolute counts NOT proportions.
 
 ``` r
 ggplot(cmc, aes(x=Contraceptive, fill=HusbOcc)) + 
   geom_bar(position='dodge')
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-17-1.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
-using the "stack" option
+Next, let's use the "stack" option. This gives a better idea of the relative proportions of the 4 Husband Occupation categories WITHIN each of the 3 Contraceptive Use categories. But the "stack" heights show the absolute counts of each Contraceptive Use Choice category.
 
 ``` r
 ggplot(cmc, aes(x=Contraceptive, fill=HusbOcc)) + 
   geom_bar(position='stack')
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-18-1.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
-using the "fill" option
+Finally, use the "fill" option. This one also "stacks" the relative proportions of the 4 Husband Occupation categories WITHIN each of the 3 Contraceptive Use categories. But now each Contraceptive Use Category is re-scaled to 100% - so this plot gives you an idea of the relative %'s of Husband's Occupation WITHIN Contraceptive Use Category.
 
 ``` r
 ggplot(cmc, aes(x=Contraceptive, fill=HusbOcc)) + 
   geom_bar(position='fill')
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-19-1.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
-### Scatterplot of Wife's Age and Number of Children
+### Bi-variate ~Continuous/Numerical Data - Scatterplot of Wife's Age and Number of Children
 
-Remember there are 1473 subjects in this dataset.
+**NOTE:** Remember there are 1473 subjects in this dataset.
+
+This time we will use the `geom_point()` layer to make a scatterplot.
 
 ``` r
 cmc %>%
@@ -452,9 +333,9 @@ cmc %>%
     geom_point()
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
-This obviously has a lot of overplotting (points on top of one another). One way to alleviate this issue is to add "jitter" or a little bit of randomness so the points won't lie on top of one another.
+This obviously has a lot of overplotting (points on top of one another). One way to alleviate this issue is to add "jitter" as the `position=` option within the `geom_point()` command. This adds a little bit of randomness so the points won't lie on top of one another - helps alleviate overplotting.
 
 ``` r
 cmc %>%
@@ -462,9 +343,9 @@ cmc %>%
     geom_point(position = "jitter")
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-21-1.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
-Still another way to "bin" the data in 2 dimensions with a lot of points in a scatterplot is to use the `geom_hex()` function which basically does a density plot using 2-D bins like a 2-D histogram in a way.
+Still another way to handle the overplotting issue is to "bin" the data in 2 dimensions. This is helpful when there are a lot of points in a scatterplot. So, we will use the `geom_hex()` layer (instead of `geom_point()`) which basically does a density plot using 2-D bins like a 2-D histogram in a way.
 
 ``` r
 cmc %>%
@@ -472,47 +353,51 @@ cmc %>%
     geom_hex()
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-22-1.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
-### Boxplot options
+### Categorical and Numerical Data - Boxplots & Options
 
-``` r
-# make a boxplot showing the range of Wife Ages by
-# Number of Children - "bin" widths = 1 child
-# we'll use cut_width
-cmc %>%
-  ggplot(aes(x=NumChild, y=WifeAge)) +
-    geom_boxplot(aes(group=cut_width(NumChild, 1)))
-```
+For the plots below, we will use the `geom_boxplot()` option and make boxplots for the Number of Children by the Wife's Age. This time, we'll "bin" the Wife's Age in a couple of different ways.
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-23-1.png)
+First, let's bin the Wife's Age in 5 year increments. This uses the `cut_width()` option.
 
 ``` r
-# we could also use a binning option based
-# on n groups of equal Number of Children range
-# let's try 8 intervals using cut_interval
 cmc %>%
-  ggplot(aes(x=NumChild, y=WifeAge)) +
-    geom_boxplot(aes(group=cut_interval(NumChild, 8)))
+  ggplot(aes(x=WifeAge, y=NumChild)) +
+    geom_boxplot(aes(group=cut_width(WifeAge, 5)))
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-23-2.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-16-1.png)
+
+Now, let's "bin" the Wife's Age into 10 equal intervals across the range of ages. This uses the `cut_interval()` options.
 
 ``` r
-# this time use cut_number and 6 bins
-# so that each bin has about the same # of cases
 cmc %>%
-  ggplot(aes(x=NumChild, y=WifeAge)) +
-    geom_boxplot(aes(group=cut_number(NumChild, 6)))
+  ggplot(aes(x=WifeAge, y=NumChild)) +
+    geom_boxplot(aes(group=cut_interval(WifeAge, 10)))
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-23-3.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-17-1.png)
 
-### Histograms and Density estimates of Continuous Data
+We could also "bin" the Wife's age by the number of subjects in each "bin" - so, let's make 6 "bins" that have about the same number of people in them. This uses the `cut_number()` option. Notice that the youngest and oldest "bins" are wider since there are fewer people at either end - thus the "bins" have to be wider to have the same number of people.
+
+``` r
+cmc %>%
+  ggplot(aes(x=WifeAge, y=NumChild)) +
+    geom_boxplot(aes(group=cut_number(WifeAge, 6)))
+```
+
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-18-1.png)
+
+### Numeric/Continuous Univariate Data - Histograms and Density estimates of Continuous Data
 
 Let's look at Wife's Age and Number of Children - do you expect these to look normal?
 
 see more at <http://www.cookbook-r.com/Graphs/Plotting_distributions_(ggplot2)/>
+
+For this example, we will use BOTH the `geom_histogram()` and `geom_density()` layers.
+
+**NOTE:** In `geom_histogram()` we have a *wierd* looking option `aes(y=..density..)` - this option sets the vertical ("Y") axis for this histogram to be the same as it will be for the density plot - both plots have to use the proportion scale and NOT the raw counts (which is tghe default for histograms).
 
 ``` r
 cmc %>%
@@ -523,7 +408,9 @@ cmc %>%
     geom_density()
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-24-1.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-19-1.png)
+
+Here is a slight tweak with the histogram bars in one color and the density curve overlaid using a different color with a transparency setting `alpha=.2` showing the utility of `ggplot2` and building visually appealing layers for detailed data visualizations.
 
 ``` r
 cmc %>%
@@ -534,9 +421,9 @@ cmc %>%
     geom_density(alpha=.2, fill="blue")
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-24-2.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
-What about overlaying a Normal Curve? Also add some better axis labels and a title
+What about overlaying a Normal Curve? Here we use the `stat_function()` to draw a normal curve over the histogram for quick comparison. The code also includes the `labs()` layer for adding customized axis labels and a title.
 
 ``` r
 cmc %>%
@@ -554,4 +441,4 @@ cmc %>%
        y = "Density")
 ```
 
-![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-25-1.png)
+![](N741eda_githubmd_files/figure-markdown_github/unnamed-chunk-21-1.png)
