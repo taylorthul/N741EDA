@@ -1,51 +1,11 @@
----
-title: "Replace with Main Title"
-author: "Your Name"
-date: "AUTOMATIC"
----
 
-
-```{r echo=FALSE, message=FALSE}
-# include this code chunk as-is to set options
-knitr::opts_chunk$set(comment=NA, prompt=TRUE)
-library(Rcmdr)
-library(car)
-library(RcmdrMisc)
-```
-
-
-```{r echo=FALSE}
-# include this code chunk as-is to enable 3D graphs
-library(rgl)
-knitr::knit_hooks$set(webgl = hook_webgl)
-```
-
-```{r}
 summary(cmc)
-```
-
-
-```{r}
 library(abind, pos=22)
-```
-
-
-```{r}
 library(e1071, pos=23)
-```
-
-
-```{r}
 numSummary(cmc[,c("NumChild", "WifeAge")], statistics=c("mean", "sd", "IQR",
    "quantiles"), quantiles=c(0,.25,.5,.75,1))
-```
-
-```{r}
 numSummary(cmc[,"NumChild"], groups=cmc$Contraceptive, statistics=c("mean", 
   "sd", "IQR", "quantiles"), quantiles=c(0,.25,.5,.75,1))
-```
-
-```{r}
 local({
   .Table <- with(cmc, table(Contraceptive))
   cat("\ncounts:\n")
@@ -60,22 +20,9 @@ local({
   cat("\npercentages:\n")
   print(round(100*.Table/sum(.Table), 2))
 })
-```
-
-```{r}
 with(cmc, tapply(NumChild, list(Contraceptive), median, na.rm=TRUE))
-```
-
-```{r}
 library(nortest, pos=24)
-```
-
-
-```{r}
 with(cmc, shapiro.test(NumChild))
-```
-
-```{r}
 local({
   .Table <- xtabs(~Contraceptive+HusbOcc, data=cmc)
   cat("\nFrequency table:\n")
@@ -85,50 +32,17 @@ local({
   .Test <- chisq.test(.Table, correct=FALSE)
   print(.Test)
 })
-```
-
-```{r}
 t.test(NumChild~WifeRel, alternative='two.sided', conf.level=.95, 
   var.equal=FALSE, data=cmc)
-```
-
-```{r}
 library(mvtnorm, pos=25)
-```
-
-
-```{r}
 library(survival, pos=25)
-```
-
-
-```{r}
 library(MASS, pos=25)
-```
-
-
-```{r}
 library(TH.data, pos=25)
-```
-
-
-```{r}
 library(multcomp, pos=25)
-```
-
-
-```{r}
 AnovaModel.1 <- aov(NumChild ~ WifeEd, data=cmc)
 summary(AnovaModel.1)
 with(cmc, numSummary(NumChild, groups=WifeEd, statistics=c("mean", "sd")))
-```
-
-```{r}
 scatterplot(NumChild~WifeAge, reg.line=FALSE, smooth=TRUE, spread=FALSE, 
   boxplots=FALSE, span=0.5, ellipse=FALSE, levels=c(.5, .9), data=cmc)
-```
-
-```{r}
 Boxplot(NumChild~WifeEd, data=cmc, id.method="y")
-```
 

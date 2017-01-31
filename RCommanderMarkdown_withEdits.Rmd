@@ -1,7 +1,7 @@
 ---
-title: "Replace with Main Title"
-author: "Your Name"
-date: "AUTOMATIC"
+title: "EDA with R Commander"
+author: "Melinda Higgins"
+date: "January 31, 2017"
 ---
 
 
@@ -20,6 +20,22 @@ library(rgl)
 knitr::knit_hooks$set(webgl = hook_webgl)
 ```
 
+Add R code to load the cmc dataset
+
+```{r}
+# R Script for loading the cmc dataset
+# and loading the Rcmdr package and 
+# starting the Rcmdr GUI interface
+
+# load the cmc dataset into the local environment
+load("cmc.RData")
+
+# load the Rcmdr package 
+# this also starts the Rcmdr GUI interface
+library(Rcmdr)
+```
+
+
 ```{r}
 summary(cmc)
 ```
@@ -36,13 +52,23 @@ library(e1071, pos=23)
 
 
 ```{r}
-numSummary(cmc[,c("NumChild", "WifeAge")], statistics=c("mean", "sd", "IQR",
+tb <- numSummary(cmc[,c("NumChild", "WifeAge")], statistics=c("mean", "sd", "IQR",
    "quantiles"), quantiles=c(0,.25,.5,.75,1))
+
+# pull the $table out of the numSummary() output which is a list
+# then use knitr::kable() to make a prettier table
+knitr::kable(numSummary(cmc[,c("NumChild", "WifeAge")], statistics=c("mean", "sd", "IQR",
+   "quantiles"), quantiles=c(0,.25,.5,.75,1))$table)
+
 ```
 
 ```{r}
+# pipe the $table into knitr::kable()
+# make sure dplyr package is loaded so the %>% will work
+library(dplyr)
 numSummary(cmc[,"NumChild"], groups=cmc$Contraceptive, statistics=c("mean", 
-  "sd", "IQR", "quantiles"), quantiles=c(0,.25,.5,.75,1))
+  "sd", "IQR", "quantiles"), quantiles=c(0,.25,.5,.75,1))$table %>%
+  knitr::kable()
 ```
 
 ```{r}
@@ -50,9 +76,21 @@ local({
   .Table <- with(cmc, table(Contraceptive))
   cat("\ncounts:\n")
   print(.Table)
+  # add knitr::kable() to improve .Tabe output
+  # convert to a data.frame first
+  knitr::kable(as.data.frame(.Table))
   cat("\npercentages:\n")
   print(round(100*.Table/sum(.Table), 2))
+  # convert to a data.frame THEN pipe to knitr::kable() and
+  # update the column names
+  as.data.frame(round(100*.Table/sum(.Table), 2)) %>% 
+    knitr::kable(col.names = c("Contraceptive","Percentages"))
 })
+
+# NOTE - only the 2nd knitr::kable() table
+# shows up in the Rmarkdown - since the code
+# above is inside the local() environment...
+
 local({
   .Table <- with(cmc, table(HusbOcc))
   cat("\ncounts:\n")
