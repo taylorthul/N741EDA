@@ -2,10 +2,7 @@
 title: 'N741: Exploratory Data Analysis'
 author: "Melinda K. Higgins, PhD."
 date: "January 30, 2017"
-output:
-  word_document: default
-  pdf_document: default
-  html_document: default
+output: githut_document 
 ---
 
 ## Initial R Chunk - document and environment setup
@@ -130,6 +127,10 @@ The `save()` command will save a copy of your dataset (the `cmc` object) as an `
 # save the cmc dataset with the updated variable names
 # and associated factor levels and labeling applied.
 save(cmc, file="cmc.RData")
+
+#later if you want to load into memory
+load("cmc.RData")
+summary (cmc)
 ```
 
 ### Look at a subset of the data
@@ -177,7 +178,7 @@ The following code shows:
 
 # initial steps
 cmc %>%
-    summarise(nChild = length(NumChild),
+    summarise(nsubj = length(NumChild),
               meanChild = mean(NumChild))
 
 # look at output - figure out number of columns, add knitr::kable()
